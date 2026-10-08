@@ -19,6 +19,7 @@ without giving up the parent-chain reward.
 | Web wallet | [wallet.kronex.network](https://wallet.kronex.network/) |
 | Testnet JSON-RPC | `https://rpc-testnet.kronex.network` |
 | Node binaries | [Releases](https://github.com/kronexnetwork/kronex/releases) |
+| Docker image | `ghcr.io/kronexnetwork/krnxd` |
 
 This repository hosts the `krnxd` node releases. `krnxd` is the Kronex client: it
 syncs the chain, serves JSON-RPC, builds blocks for miners and accepts their work.
@@ -133,6 +134,37 @@ node should be reachable by others; it syncs fine without that. JSON-RPC uses `8
 
 `krnxd --help` lists every flag. A config file works too: `krnxd --testnet dumpconfig`
 writes the current configuration as TOML, and `krnxd --config node.toml` loads one.
+
+### Docker
+
+Every release is also published as an image for `linux/amd64` and `linux/arm64` at
+`ghcr.io/kronexnetwork/krnxd`. `:testnet` follows the latest testnet release and
+`:v1.0.0-testnet.1` pins one.
+
+```bash
+docker run -d --name krnxd \
+  -v krnxd-data:/root/.kronex \
+  -p 30303:30303 -p 30303:30303/udp \
+  ghcr.io/kronexnetwork/krnxd:testnet
+```
+
+The image runs `krnxd --testnet` by default. Arguments you pass replace that command
+line, so repeat `--testnet` when adding flags. Inside a container RPC has to listen
+on all interfaces to be reachable through the port mapping; keep the mapping itself
+on the loopback address:
+
+```bash
+docker run -d --name krnxd \
+  -v krnxd-data:/root/.kronex \
+  -p 30303:30303 -p 30303:30303/udp \
+  -p 127.0.0.1:8545:8545 \
+  ghcr.io/kronexnetwork/krnxd:testnet \
+  --testnet --http --http.addr 0.0.0.0 --http.api eth,net,web3,krnx
+```
+
+The image is built from the release archive by [`Dockerfile`](Dockerfile), which
+verifies it against `SHA256SUMS`; `docker build --build-arg VERSION=v1.0.0-testnet.1 .`
+reproduces it locally.
 
 ## Mining
 
