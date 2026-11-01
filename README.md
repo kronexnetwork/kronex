@@ -139,7 +139,7 @@ writes the current configuration as TOML, and `krnxd --config node.toml` loads o
 
 Every release is also published as an image for `linux/amd64` and `linux/arm64` at
 `ghcr.io/kronexnetwork/krnxd`. `:testnet` follows the latest testnet release and
-`:v1.0.0-testnet.1` pins one.
+`:v1.0.1-testnet.1` pins one.
 
 ```bash
 docker run -d --name krnxd \
@@ -163,7 +163,7 @@ docker run -d --name krnxd \
 ```
 
 The image is built from the release archive by [`Dockerfile`](Dockerfile), which
-verifies it against `SHA256SUMS`; `docker build --build-arg VERSION=v1.0.0-testnet.1 .`
+verifies it against `SHA256SUMS`; `docker build --build-arg VERSION=v1.0.1-testnet.1 .`
 reproduces it locally.
 
 ## Mining
